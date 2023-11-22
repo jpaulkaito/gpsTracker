@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const LoginCard = ({ onClose }) => {
+const LoginCard = ({ onClose, setIsLoggedIn }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -12,14 +12,18 @@ const LoginCard = ({ onClose }) => {
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:3001/login', { username, password });
-      console.log(response.data.message); // Assuming your server sends a message upon successful login
+      console.log(response.data.message);
+      console.log('Login history ID:', response.data.loginHistoryId);
       onClose();
-      navigate('/gpstracker'); // Redirect to gpstracker.js after successful login
+      setIsLoggedIn(true);
+      navigate('/gpstracker', { state: { loginHistoryId: response.data.loginHistoryId } });
     } catch (error) {
       console.error('Error logging in:', error);
       setErrorMessage('Incorrect login details. Please try again.');
     }
   };
+  
+  
 
   return (
     <div className="card">

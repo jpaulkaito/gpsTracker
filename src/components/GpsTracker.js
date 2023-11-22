@@ -1,26 +1,33 @@
-// client/src/components/GpsTracker.js
+// GpsTracker.js
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import useAuth from '../context/useAuth';
 
 const GpsTracker = () => {
-  const { isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
+  const { logout, username } = useAuth();
+  const location = useLocation();  // Use useLocation hook to get location information
+  const loginHistoryId = location.state?.loginHistoryId;
 
-  const handleLogout = () => {
-    // Implement your logout logic
-    logout();
+  console.log('Username:', username);
+  console.log('Login History ID:', loginHistoryId);
+
+  const handleLogout = async () => {
+    try {
+      logout();
+      navigate('/login');
+      console.log(`${username} Successfully logout`);
+    } catch (error) {
+      console.error('Error during logout:', error.message);
+    }
   };
-
-  // Redirect to login page if not logged in
-  if (!isLoggedIn) {
-    return <Navigate to="/login" />;
-  }
 
   return (
     <div>
       <h2>GpsTracker Component</h2>
+      <p>Welcome, {username}!</p>
+      <p>Login History ID: {loginHistoryId}</p>
       <button onClick={handleLogout}>Logout</button>
-      {/* Add your GPS tracking functionality here */}
     </div>
   );
 };
